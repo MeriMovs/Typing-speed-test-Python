@@ -1,0 +1,416 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Typing Speed Test</title>
+<link rel="icon" href="data:,">
+<style>
+  :root {
+    color-scheme: light dark;
+    --bg: #f6f5f1;
+    --panel: #ffffff;
+    --ink: #22242a;
+    --muted: #62656e;
+    --line: #dcdbd4;
+    --accent: #0b6e75;
+    --good: #1a7a43;
+    --bad-bg: #c62f3a;
+    --bad-ink: #ffffff;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #17191d;
+      --panel: #21242a;
+      --ink: #eceded;
+      --muted: #a2a6af;
+      --line: #383c44;
+      --accent: #5cc8cf;
+      --good: #63d08e;
+      --bad-bg: #d9434f;
+      --bad-ink: #ffffff;
+    }
+  }
+  * { box-sizing: border-box; }
+  [hidden] { display: none !important; }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    padding: 48px 16px;
+    background: var(--bg);
+    color: var(--ink);
+    font: 16px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  }
+  main { max-width: 720px; margin: 0 auto; }
+  h1 { margin: 0 0 4px; font-size: 28px; letter-spacing: -0.01em; }
+  h2 { margin: 0 0 20px; font-size: 22px; }
+  p { margin: 0; }
+  .muted { color: var(--muted); }
+  .intro { margin-bottom: 32px; }
+  .hint { margin-top: 20px; font-size: 14px; color: var(--muted); }
+  .message { margin-top: 16px; font-weight: 600; color: var(--accent); }
+
+  button {
+    font: inherit;
+    color: inherit;
+    cursor: pointer;
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 10px 16px;
+  }
+  button:hover { border-color: var(--accent); }
+  button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  kbd {
+    display: inline-block;
+    min-width: 1.6em;
+    margin-right: 10px;
+    padding: 0 5px;
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    color: var(--muted);
+    font: 13px/1.6 ui-monospace, Menlo, Consolas, monospace;
+    text-align: center;
+  }
+  .levels { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+  .levels button { padding: 20px 16px; font-size: 18px; font-weight: 600; }
+  .scores-link { margin-top: 12px; width: 100%; text-align: left; }
+  @media (max-width: 480px) { .levels { grid-template-columns: 1fr; } }
+
+  .stats { display: flex; flex-wrap: wrap; gap: 8px 32px; margin-bottom: 20px; }
+  .stat-label { display: block; font-size: 13px; color: var(--muted); }
+  .stat-value {
+    font-size: 24px;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+  }
+  .text {
+    padding: 24px;
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    font: 22px/1.8 ui-monospace, Menlo, Consolas, monospace;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+  }
+  .char { color: var(--muted); }
+  .char.good { color: var(--good); }
+  .char.bad { color: var(--bad-ink); background: var(--bad-bg); }
+  .char.current { color: var(--ink); box-shadow: inset 0 -3px 0 var(--accent); }
+
+  .results { margin: 0 0 8px; }
+  .results div {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .results dt { color: var(--muted); }
+  .results dd {
+    margin: 0;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+  }
+  .results .speed dd { font-size: 24px; color: var(--good); }
+
+  table { width: 100%; border-collapse: collapse; }
+  th, td { padding: 8px 12px 8px 0; border-bottom: 1px solid var(--line); text-align: left; }
+  th { font-size: 13px; font-weight: 500; color: var(--muted); }
+  .number { text-align: right; font-variant-numeric: tabular-nums; }
+  .back { margin-top: 24px; }
+</style>
+</head>
+<body>
+<main>
+  <section id="menu">
+    <h1>Typing Speed Test</h1>
+    <p class="muted intro">Choose a level. The timer starts when you start typing.</p>
+    <div class="levels">
+      <button type="button" data-level="Easy"><kbd>1</kbd>Easy</button>
+      <button type="button" data-level="Medium"><kbd>2</kbd>Medium</button>
+      <button type="button" data-level="Hard"><kbd>3</kbd>Hard</button>
+    </div>
+    <button type="button" class="scores-link" id="show-scores"><kbd>S</kbd>Best scores</button>
+    <p class="message" id="menu-message" role="alert" hidden></p>
+  </section>
+
+  <section id="game" hidden>
+    <h2 id="game-level"></h2>
+    <div class="stats">
+      <p><span class="stat-label">Time</span><span class="stat-value" id="stat-time"></span></p>
+      <p><span class="stat-label">WPM</span><span class="stat-value" id="stat-wpm"></span></p>
+      <p><span class="stat-label">Accuracy</span><span class="stat-value" id="stat-accuracy"></span></p>
+    </div>
+    <div class="text" id="text"></div>
+    <p class="hint">Backspace: fix a mistake &nbsp; Esc: back to menu</p>
+  </section>
+
+  <section id="results" hidden>
+    <h2>Results</h2>
+    <dl class="results">
+      <div class="speed"><dt>Speed</dt><dd id="result-wpm"></dd></div>
+      <div><dt>Accuracy</dt><dd id="result-accuracy"></dd></div>
+      <div><dt>Mistakes</dt><dd id="result-mistakes"></dd></div>
+      <div><dt>Time</dt><dd id="result-time"></dd></div>
+    </dl>
+    <p class="message" id="result-message" role="status" hidden></p>
+    <button type="button" class="back" data-back><kbd>Enter</kbd>Back to menu</button>
+  </section>
+
+  <section id="scores" hidden>
+    <h2>Best scores</h2>
+    <p class="muted" id="no-scores" hidden>No scores yet. Play a round first!</p>
+    <table id="score-table" hidden>
+      <thead>
+        <tr>
+          <th>#</th><th class="number">WPM</th><th class="number">Accuracy</th>
+          <th>Level</th><th>Date</th>
+        </tr>
+      </thead>
+      <tbody id="score-rows"></tbody>
+    </table>
+    <button type="button" class="back" data-back><kbd>Enter</kbd>Back to menu</button>
+  </section>
+</main>
+
+<script>
+  const CHARS_PER_WORD = 5;  // The same "standard word" as the terminal game.
+
+  const screens = ["menu", "game", "results", "scores"];
+  const element = (id) => document.getElementById(id);
+
+  let screen = "menu";
+  let round = null;
+  let timer = null;
+
+  function showScreen(name) {
+    screen = name;
+    for (const id of screens) element(id).hidden = id !== name;
+    if (document.activeElement) document.activeElement.blur();
+  }
+
+  function showMessage(id, text) {
+    element(id).textContent = text;
+    element(id).hidden = !text;
+  }
+
+  function goToMenu() {
+    clearInterval(timer);
+    round = null;
+    showScreen("menu");
+  }
+
+  async function fetchJson(url, options) {
+    const response = await fetch(url, options);
+    if (!response.ok) throw new Error(`Request failed: ${response.status}`);
+    return response.json();
+  }
+
+  // ----- Playing a round -----
+
+  async function startRound(level) {
+    let data;
+    try {
+      data = await fetchJson(`/api/text?level=${encodeURIComponent(level)}`);
+    } catch {
+      showMessage("menu-message", "Could not reach the game server. Is it still running?");
+      return;
+    }
+
+    showMessage("menu-message", "");
+    round = {
+      level,
+      target: data.text,
+      typed: "",
+      startTime: null,
+      endTime: null,
+      correctKeys: 0,
+      totalKeys: 0,
+    };
+    element("game-level").textContent = `Level: ${level}`;
+    element("text").replaceChildren(...[...round.target].map((char) => {
+      const span = document.createElement("span");
+      span.className = "char";
+      span.textContent = char;
+      return span;
+    }));
+    showScreen("game");
+    drawRound();
+    timer = setInterval(drawStats, 100);
+  }
+
+  function elapsedSeconds() {
+    if (round.startTime === null) return 0;
+    return ((round.endTime ?? performance.now()) - round.startTime) / 1000;
+  }
+
+  function correctChars() {
+    let count = 0;
+    for (let i = 0; i < round.typed.length; i++) {
+      if (round.typed[i] === round.target[i]) count++;
+    }
+    return count;
+  }
+
+  function wpm() {
+    const elapsed = elapsedSeconds();
+    if (elapsed === 0) return 0;
+    return (correctChars() / CHARS_PER_WORD) / (elapsed / 60);
+  }
+
+  function accuracy() {
+    if (round.totalKeys === 0) return 100;
+    return round.correctKeys / round.totalKeys * 100;
+  }
+
+  function typeChar(char) {
+    if (round.startTime === null) round.startTime = performance.now();
+
+    round.totalKeys++;
+    if (char === round.target[round.typed.length]) round.correctKeys++;
+    round.typed += char;
+
+    if (round.typed.length === round.target.length) {
+      round.endTime = performance.now();
+      finishRound();
+    } else {
+      drawRound();
+    }
+  }
+
+  function backspace() {
+    round.typed = round.typed.slice(0, -1);
+    drawRound();
+  }
+
+  function drawStats() {
+    element("stat-time").textContent = `${elapsedSeconds().toFixed(1)}s`;
+    element("stat-wpm").textContent = wpm().toFixed(1);
+    element("stat-accuracy").textContent = `${accuracy().toFixed(1)}%`;
+  }
+
+  function drawRound() {
+    const spans = element("text").children;
+    for (let i = 0; i < spans.length; i++) {
+      let state = "";
+      if (i === round.typed.length) state = "current";
+      else if (i < round.typed.length) {
+        state = round.typed[i] === round.target[i] ? "good" : "bad";
+      }
+      spans[i].className = `char ${state}`;
+    }
+    drawStats();
+  }
+
+  // ----- Results and scores -----
+
+  async function finishRound() {
+    clearInterval(timer);
+    const finished = round;
+    const speed = wpm();
+    const correctness = accuracy();
+    round = null;
+
+    element("result-wpm").textContent = `${speed.toFixed(1)} WPM`;
+    element("result-accuracy").textContent = `${correctness.toFixed(1)}%`;
+    element("result-mistakes").textContent = finished.totalKeys - finished.correctKeys;
+    element("result-time").textContent =
+      `${((finished.endTime - finished.startTime) / 1000).toFixed(1)} seconds`;
+    showMessage("result-message", "");
+    showScreen("results");
+
+    try {
+      const result = await fetchJson("/api/scores", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          level: finished.level,
+          wpm: speed,
+          accuracy: correctness,
+        }),
+      });
+      if (result.new_record) {
+        showMessage("result-message", `New best score for ${finished.level}!`);
+      }
+    } catch {
+      showMessage("result-message", "Your score could not be saved.");
+    }
+  }
+
+  async function showScores() {
+    let scores;
+    try {
+      scores = await fetchJson("/api/scores");
+    } catch {
+      showMessage("menu-message", "Could not reach the game server. Is it still running?");
+      return;
+    }
+
+    showMessage("menu-message", "");
+    element("score-rows").replaceChildren(...scores.map((score, index) => {
+      const row = document.createElement("tr");
+      const cells = [
+        [index + 1, ""],
+        [score.wpm.toFixed(1), "number"],
+        [`${score.accuracy.toFixed(1)}%`, "number"],
+        [score.level, ""],
+        [score.date, ""],
+      ];
+      for (const [text, className] of cells) {
+        const cell = document.createElement("td");
+        cell.textContent = text;
+        cell.className = className;
+        row.append(cell);
+      }
+      return row;
+    }));
+    element("score-table").hidden = scores.length === 0;
+    element("no-scores").hidden = scores.length > 0;
+    showScreen("scores");
+  }
+
+  // ----- Keyboard and buttons -----
+
+  function handleGameKey(event) {
+    if (event.key === "Escape") {
+      goToMenu();
+    } else if (round === null) {
+      return;
+    } else if (event.key === "Backspace") {
+      event.preventDefault();
+      backspace();
+    } else if (event.key.length === 1) {
+      event.preventDefault();  // Stops the browser using space, ' and / itself.
+      typeChar(event.key);
+    }
+  }
+
+  function handleMenuKey(event) {
+    const level = { 1: "Easy", 2: "Medium", 3: "Hard" }[event.key];
+    if (level) startRound(level);
+    else if (event.key.toLowerCase() === "s") showScores();
+  }
+
+  document.addEventListener("keydown", (event) => {
+    if (event.ctrlKey || event.metaKey || event.altKey) return;
+
+    if (screen === "game") handleGameKey(event);
+    else if (screen === "menu") {
+      if (!event.repeat) handleMenuKey(event);
+    } else if (event.key === "Enter" && !event.repeat) {
+      // Only Enter continues, so fast typers do not skip the screen by accident.
+      event.preventDefault();
+      goToMenu();
+    }
+  });
+
+  for (const button of document.querySelectorAll("[data-level]")) {
+    button.addEventListener("click", () => startRound(button.dataset.level));
+  }
+  for (const button of document.querySelectorAll("[data-back]")) {
+    button.addEventListener("click", goToMenu);
+  }
+  element("show-scores").addEventListener("click", showScores);
+</script>
+</body>
+</html>
