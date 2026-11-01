@@ -25,6 +25,13 @@ python3 typing_speed_test.py
 Both versions need `curses`, which Windows does not include, so on Windows
 install it first with `pip install windows-curses`.
 
+## Languages
+
+The browser version has English and Russian. Pick one on the main screen; the
+page, the tips and the texts all change, and your choice is remembered. For
+Russian, switch your keyboard to the Russian layout. Scores from both languages
+share one list. The terminal version is English only.
+
 ## How to play
 
 1. Choose a level: Easy, Medium or Hard.
@@ -34,6 +41,13 @@ install it first with `pip install windows-curses`.
 4. When you reach the end of the text you see your results. Scores are saved in
    `scores.json`, and the top five appear under "Best scores". Both versions
    share the same scores.
+
+## One minute mode
+
+In the browser version, choose "1 minute" above the levels (or press M). You
+type for 60 seconds from your first key press, and the clock counts down. Scores
+go in the same list as full text rounds. The terminal version does not have
+this mode.
 
 ## How the score is calculated
 

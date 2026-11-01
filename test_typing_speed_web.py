@@ -8,8 +8,13 @@ from http.client import HTTPConnection
 from http.server import ThreadingHTTPServer
 from pathlib import Path
 
-from typing_speed_test import TEXTS, load_scores
-from typing_speed_web import GameHandler, HOST, is_valid_score
+from typing_speed_test import TEXTS, TEXTS_RU, load_scores
+from typing_speed_web import (
+    GameHandler,
+    HOST,
+    MINUTE_TEXT_LENGTH,
+    is_valid_score,
+)
 
 
 class ScoreValidationTests(unittest.TestCase):
@@ -70,6 +75,26 @@ class ServerTests(unittest.TestCase):
         status, body = self.request("GET", "/api/text?level=Hard")
         self.assertEqual(status, 200)
         self.assertIn(json.loads(body)["text"], TEXTS["Hard"])
+
+    def test_russian_text_comes_from_the_chosen_level(self):
+        status, body = self.request("GET", "/api/text?level=Hard&lang=ru")
+        self.assertEqual(status, 200)
+        self.assertIn(json.loads(body)["text"], TEXTS_RU["Hard"])
+
+    def test_minute_mode_gives_a_long_text(self):
+        status, body = self.request("GET", "/api/text?level=Easy&mode=minute")
+        self.assertEqual(status, 200)
+        text = json.loads(body)["text"]
+        self.assertGreaterEqual(len(text), MINUTE_TEXT_LENGTH)
+        self.assertIn(TEXTS["Easy"][0], text)
+
+    def test_minute_mode_stays_in_the_chosen_language(self):
+        _, body = self.request("GET", "/api/text?level=Hard&lang=ru&mode=minute")
+        self.assertIn(TEXTS_RU["Hard"][0], json.loads(body)["text"])
+
+    def test_unknown_language_gives_no_text(self):
+        status, _ = self.request("GET", "/api/text?level=Easy&lang=fr")
+        self.assertEqual(status, 400)
 
     def test_unknown_level_gives_no_text(self):
         status, _ = self.request("GET", "/api/text?level=Impossible")

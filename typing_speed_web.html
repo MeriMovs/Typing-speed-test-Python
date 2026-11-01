@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-ru-title="Тест скорости печати">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -74,6 +74,10 @@
   }
   .levels { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
   .levels button { padding: 20px 16px; font-size: 18px; font-weight: 600; }
+  .choice { display: flex; gap: 8px; margin-bottom: 20px; }
+  .choice button { padding: 4px 12px; font-size: 14px; }
+  .choice button[aria-pressed="true"] { border-color: var(--accent); color: var(--accent); }
+  .modes { margin-bottom: 12px; }
   .tips-link { margin-top: 12px; width: 100%; text-align: left; }
   .best-scores { margin-top: 40px; }
   @media (max-width: 480px) { .levels { grid-template-columns: 1fr; } }
@@ -93,6 +97,14 @@
     font: 22px/1.8 ui-monospace, Menlo, Consolas, monospace;
     white-space: pre-wrap;
     overflow-wrap: anywhere;
+  }
+  /* A one minute text is long, so only four lines show at a time. */
+  .text.minute {
+    position: relative;
+    height: calc(4 * 1.8em);
+    box-sizing: content-box;
+    padding-block: 0;
+    overflow: hidden;
   }
   .char { color: var(--muted); }
   .char.good { color: var(--good); }
@@ -124,23 +136,31 @@
 <body>
 <main>
   <section id="menu">
-    <h1>Typing Speed Test</h1>
-    <p class="muted intro">Choose a level. The timer starts when you start typing.</p>
-    <div class="levels">
-      <button type="button" data-level="Easy"><kbd>1</kbd>Easy</button>
-      <button type="button" data-level="Medium"><kbd>2</kbd>Medium</button>
-      <button type="button" data-level="Hard"><kbd>3</kbd>Hard</button>
+    <div class="choice">
+      <button type="button" data-language="en" lang="en">English</button>
+      <button type="button" data-language="ru" lang="ru">Русский</button>
     </div>
-    <button type="button" class="tips-link" id="show-tips"><kbd>H</kbd>How to type faster</button>
+    <h1 data-ru="Тест скорости печати">Typing Speed Test</h1>
+    <p class="muted intro" data-ru="Выберите уровень. Таймер запустится, когда вы начнете печатать.">Choose a level. The timer starts when you start typing.</p>
+    <div class="choice modes">
+      <button type="button" data-mode="text"><span data-ru="Весь текст">Full text</span></button>
+      <button type="button" data-mode="minute"><kbd>M</kbd><span data-ru="1 минута">1 minute</span></button>
+    </div>
+    <div class="levels">
+      <button type="button" data-level="Easy"><kbd>1</kbd><span data-ru="Легкий">Easy</span></button>
+      <button type="button" data-level="Medium"><kbd>2</kbd><span data-ru="Средний">Medium</span></button>
+      <button type="button" data-level="Hard"><kbd>3</kbd><span data-ru="Сложный">Hard</span></button>
+    </div>
+    <button type="button" class="tips-link" id="show-tips"><kbd>H</kbd><span data-ru="Как печатать быстрее">How to type faster</span></button>
     <p class="message" id="menu-message" role="alert" hidden></p>
     <div class="best-scores">
-      <h2>Best scores</h2>
-      <p class="muted" id="no-scores" hidden>No scores yet. Play a round first!</p>
+      <h2 data-ru="Лучшие результаты">Best scores</h2>
+      <p class="muted" id="no-scores" hidden data-ru="Результатов пока нет. Сыграйте первый раунд!">No scores yet. Play a round first!</p>
       <table id="score-table" hidden>
         <thead>
           <tr>
-            <th>#</th><th class="number">WPM</th><th class="number">Accuracy</th>
-            <th>Level</th><th>Date</th>
+            <th>#</th><th class="number" data-ru="Сл/мин">WPM</th><th class="number" data-ru="Точность">Accuracy</th>
+            <th data-ru="Уровень">Level</th><th data-ru="Дата">Date</th>
           </tr>
         </thead>
         <tbody id="score-rows"></tbody>
@@ -151,29 +171,52 @@
   <section id="game" hidden>
     <h2 id="game-level"></h2>
     <div class="stats">
-      <p><span class="stat-label">Time</span><span class="stat-value" id="stat-time"></span></p>
-      <p><span class="stat-label">WPM</span><span class="stat-value" id="stat-wpm"></span></p>
-      <p><span class="stat-label">Accuracy</span><span class="stat-value" id="stat-accuracy"></span></p>
+      <p><span class="stat-label" data-ru="Время">Time</span><span class="stat-value" id="stat-time"></span></p>
+      <p><span class="stat-label" data-ru="Сл/мин">WPM</span><span class="stat-value" id="stat-wpm"></span></p>
+      <p><span class="stat-label" data-ru="Точность">Accuracy</span><span class="stat-value" id="stat-accuracy"></span></p>
     </div>
     <div class="text" id="text"></div>
-    <p class="hint">Backspace: fix a mistake &nbsp; Esc: back to menu</p>
+    <p class="hint" data-ru="Backspace: исправить ошибку, Esc: в меню. Включите русскую раскладку клавиатуры.">Backspace: fix a mistake &nbsp; Esc: back to menu</p>
   </section>
 
   <section id="results" hidden>
-    <h2>Results</h2>
+    <h2 data-ru="Результаты">Results</h2>
     <dl class="results">
-      <div class="speed"><dt>Speed</dt><dd id="result-wpm"></dd></div>
-      <div><dt>Accuracy</dt><dd id="result-accuracy"></dd></div>
-      <div><dt>Mistakes</dt><dd id="result-mistakes"></dd></div>
-      <div><dt>Time</dt><dd id="result-time"></dd></div>
+      <div class="speed"><dt data-ru="Скорость">Speed</dt><dd id="result-wpm"></dd></div>
+      <div><dt data-ru="Точность">Accuracy</dt><dd id="result-accuracy"></dd></div>
+      <div><dt data-ru="Ошибки">Mistakes</dt><dd id="result-mistakes"></dd></div>
+      <div><dt data-ru="Время">Time</dt><dd id="result-time"></dd></div>
     </dl>
     <p class="message" id="result-message" role="status" hidden></p>
-    <button type="button" class="back" data-back><kbd>Enter</kbd>Back to menu</button>
+    <button type="button" class="back" data-back><kbd>Enter</kbd><span data-ru="В меню">Back to menu</span></button>
   </section>
 </main>
 
 <script>
+  const language = localStorage.getItem("language") === "ru" ? "ru" : "en";
+  const say = (english, russian) => (language === "ru" ? russian : english);
+
+  // The English text is in the HTML; Russian is kept in data-ru attributes.
+  if (language === "ru") {
+    document.documentElement.lang = "ru";
+    document.title = document.documentElement.dataset.ruTitle;
+    for (const item of document.querySelectorAll("[data-ru]")) {
+      item.textContent = item.dataset.ru;
+    }
+    for (const item of document.querySelectorAll("[data-ru-label]")) {
+      item.setAttribute("aria-label", item.dataset.ruLabel);
+    }
+  }
+
   const CHARS_PER_WORD = 5;  // The same "standard word" as the terminal game.
+  const MINUTE_SECONDS = 60;
+  const LEVEL_NAMES = {
+    Easy: say("Easy", "Легкий"),
+    Medium: say("Medium", "Средний"),
+    Hard: say("Hard", "Сложный"),
+  };
+  const SERVER_ERROR = say("Could not reach the game server. Is it still running?",
+                           "Нет связи с сервером игры. Он еще работает?");
 
   const screens = ["menu", "game", "results"];
   const element = (id) => document.getElementById(id);
@@ -181,6 +224,7 @@
   let screen = "menu";
   let round = null;
   let timer = null;
+  let mode = localStorage.getItem("mode") === "minute" ? "minute" : "text";
 
   function showScreen(name) {
     screen = name;
@@ -210,15 +254,17 @@
   async function startRound(level) {
     let data;
     try {
-      data = await fetchJson(`/api/text?level=${encodeURIComponent(level)}`);
+      data = await fetchJson(
+        `/api/text?level=${encodeURIComponent(level)}&lang=${language}&mode=${mode}`);
     } catch {
-      showMessage("menu-message", "Could not reach the game server. Is it still running?");
+      showMessage("menu-message", SERVER_ERROR);
       return;
     }
 
     showMessage("menu-message", "");
     round = {
       level,
+      minute: mode === "minute",
       target: data.text,
       typed: "",
       startTime: null,
@@ -226,7 +272,11 @@
       correctKeys: 0,
       totalKeys: 0,
     };
-    element("game-level").textContent = `Level: ${level}`;
+    const levelName = round.minute
+      ? say(`${LEVEL_NAMES[level]}, 1 minute`, `${LEVEL_NAMES[level]}, 1 минута`)
+      : LEVEL_NAMES[level];
+    element("game-level").textContent = say(`Level: ${levelName}`, `Уровень: ${levelName}`);
+    element("text").classList.toggle("minute", round.minute);
     element("text").replaceChildren(...[...round.target].map((char) => {
       const span = document.createElement("span");
       span.className = "char";
@@ -235,7 +285,7 @@
     }));
     showScreen("game");
     drawRound();
-    timer = setInterval(drawStats, 100);
+    timer = setInterval(tick, 100);
   }
 
   function elapsedSeconds() {
@@ -282,8 +332,19 @@
     drawRound();
   }
 
+  function tick() {
+    if (round.minute && elapsedSeconds() >= MINUTE_SECONDS) {
+      round.endTime = round.startTime + MINUTE_SECONDS * 1000;
+      finishRound();
+    } else {
+      drawStats();
+    }
+  }
+
   function drawStats() {
-    element("stat-time").textContent = `${elapsedSeconds().toFixed(1)}s`;
+    // In a one minute round the clock counts down.
+    const seconds = round.minute ? MINUTE_SECONDS - elapsedSeconds() : elapsedSeconds();
+    element("stat-time").textContent = say(`${seconds.toFixed(1)}s`, `${seconds.toFixed(1)} с`);
     element("stat-wpm").textContent = wpm().toFixed(1);
     element("stat-accuracy").textContent = `${accuracy().toFixed(1)}%`;
   }
@@ -298,7 +359,16 @@
       }
       spans[i].className = `char ${state}`;
     }
+    if (round.minute) scrollToCurrentChar();
     drawStats();
+  }
+
+  // Keeps the line being typed second from the top of the box.
+  function scrollToCurrentChar() {
+    const box = element("text");
+    const lineHeight = parseFloat(getComputedStyle(box).lineHeight);
+    const line = Math.floor(box.children[round.typed.length].offsetTop / lineHeight);
+    box.scrollTop = Math.max(0, line - 1) * lineHeight;
   }
 
   // ----- Results and scores -----
@@ -310,11 +380,11 @@
     const correctness = accuracy();
     round = null;
 
-    element("result-wpm").textContent = `${speed.toFixed(1)} WPM`;
+    element("result-wpm").textContent = say(`${speed.toFixed(1)} WPM`, `${speed.toFixed(1)} сл/мин`);
     element("result-accuracy").textContent = `${correctness.toFixed(1)}%`;
     element("result-mistakes").textContent = finished.totalKeys - finished.correctKeys;
-    element("result-time").textContent =
-      `${((finished.endTime - finished.startTime) / 1000).toFixed(1)} seconds`;
+    const seconds = ((finished.endTime - finished.startTime) / 1000).toFixed(1);
+    element("result-time").textContent = say(`${seconds} seconds`, `${seconds} сек`);
     showMessage("result-message", "");
     showScreen("results");
 
@@ -329,11 +399,13 @@
         }),
       });
       if (result.new_record) {
-        showMessage("result-message", `New best score for ${finished.level}!`);
+        showMessage("result-message", say(`New best score for ${LEVEL_NAMES[finished.level]}!`,
+                                           `Новый рекорд, уровень: ${LEVEL_NAMES[finished.level]}!`));
       }
       loadScores();
     } catch {
-      showMessage("result-message", "Your score could not be saved.");
+      showMessage("result-message", say("Your score could not be saved.",
+                                         "Не удалось сохранить результат."));
     }
   }
 
@@ -342,7 +414,7 @@
     try {
       scores = await fetchJson("/api/scores");
     } catch {
-      showMessage("menu-message", "Could not reach the game server. Is it still running?");
+      showMessage("menu-message", SERVER_ERROR);
       return;
     }
 
@@ -352,7 +424,7 @@
         [index + 1, ""],
         [score.wpm.toFixed(1), "number"],
         [`${score.accuracy.toFixed(1)}%`, "number"],
-        [score.level, ""],
+        [LEVEL_NAMES[score.level] ?? score.level, ""],
         [score.date, ""],
       ];
       for (const [text, className] of cells) {
@@ -368,6 +440,14 @@
   }
 
   // ----- Keyboard and buttons -----
+
+  function setMode(newMode) {
+    mode = newMode;
+    localStorage.setItem("mode", mode);
+    for (const button of document.querySelectorAll("[data-mode]")) {
+      button.setAttribute("aria-pressed", button.dataset.mode === mode);
+    }
+  }
 
   function showTips() {
     location.href = "/tips";
@@ -390,7 +470,9 @@
   function handleMenuKey(event) {
     const level = { 1: "Easy", 2: "Medium", 3: "Hard" }[event.key];
     if (level) startRound(level);
-    else if (event.key.toLowerCase() === "h") showTips();
+    // event.code is the physical key, so this also works on a Russian layout.
+    else if (event.code === "KeyH") showTips();
+    else if (event.code === "KeyM") setMode(mode === "minute" ? "text" : "minute");
   }
 
   document.addEventListener("keydown", (event) => {
@@ -412,6 +494,17 @@
   for (const button of document.querySelectorAll("[data-back]")) {
     button.addEventListener("click", goToMenu);
   }
+  for (const button of document.querySelectorAll("[data-language]")) {
+    button.setAttribute("aria-pressed", button.dataset.language === language);
+    button.addEventListener("click", () => {
+      localStorage.setItem("language", button.dataset.language);
+      location.reload();
+    });
+  }
+  for (const button of document.querySelectorAll("[data-mode]")) {
+    button.addEventListener("click", () => setMode(button.dataset.mode));
+  }
+  setMode(mode);
   element("show-tips").addEventListener("click", showTips);
   loadScores();
 </script>

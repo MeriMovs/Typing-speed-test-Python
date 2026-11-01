@@ -19,6 +19,7 @@ from urllib.parse import parse_qs, urlparse
 from typing_speed_test import (
     SCORES_FILE,
     TEXTS,
+    TEXTS_RU,
     load_scores,
     save_score,
     top_scores,
@@ -29,6 +30,8 @@ TIPS_FILE = Path(__file__).with_name("typing_tips.html")
 HOST = "127.0.0.1"  # Only this computer can reach the server.
 PORT = 8000
 MAX_BODY_SIZE = 1024
+TEXTS_BY_LANGUAGE = {"en": TEXTS, "ru": TEXTS_RU}
+MINUTE_TEXT_LENGTH = 1500  # More than even the fastest typist needs.
 
 # Saving reads the file and writes it back, so only one request may do it at
 # a time.
@@ -45,6 +48,14 @@ def is_valid_score(level, wpm, accuracy):
     return wpm >= 0 and 0 <= accuracy <= 100
 
 
+def minute_text(texts):
+    """Join texts in random order until there is enough for a one minute round."""
+    chosen = []
+    while sum(len(text) + 1 for text in chosen) < MINUTE_TEXT_LENGTH:
+        chosen += random.sample(texts, len(texts))
+    return " ".join(chosen)
+
+
 class GameHandler(BaseHTTPRequestHandler):
     scores_path = SCORES_FILE
 
@@ -55,11 +66,16 @@ class GameHandler(BaseHTTPRequestHandler):
         elif url.path == "/tips":
             self.send_body(TIPS_FILE.read_bytes(), "text/html; charset=utf-8")
         elif url.path == "/api/text":
-            level = parse_qs(url.query).get("level", [""])[0]
-            if level in TEXTS:
-                self.send_json({"text": random.choice(TEXTS[level])})
+            query = parse_qs(url.query)
+            level = query.get("level", [""])[0]
+            language = query.get("lang", ["en"])[0]
+            texts = TEXTS_BY_LANGUAGE.get(language, {}).get(level)
+            if texts and query.get("mode") == ["minute"]:
+                self.send_json({"text": minute_text(texts)})
+            elif texts:
+                self.send_json({"text": random.choice(texts)})
             else:
-                self.send_json({"error": "Unknown level"}, 400)
+                self.send_json({"error": "Unknown level or language"}, 400)
         elif url.path == "/api/scores":
             self.send_json(top_scores(load_scores(self.scores_path)))
         else:

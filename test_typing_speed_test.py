@@ -1,11 +1,13 @@
 """Tests for the game logic. Run them with:  python3 -m unittest"""
 
+import re
 import tempfile
 import unittest
 from pathlib import Path
 
 from typing_speed_test import (
     TEXTS,
+    TEXTS_RU,
     TypingTest,
     best_score,
     load_scores,
@@ -129,6 +131,19 @@ class ScoreTests(unittest.TestCase):
             save_score("Easy", wpm, 90, self.path)
         fastest = top_scores(load_scores(self.path), count=2)
         self.assertEqual([score["wpm"] for score in fastest], [50, 30])
+
+
+class RussianTextTests(unittest.TestCase):
+    def test_every_level_has_russian_texts(self):
+        self.assertEqual(list(TEXTS_RU), list(TEXTS))
+        for texts in TEXTS_RU.values():
+            self.assertTrue(texts)
+
+    def test_russian_texts_can_be_typed_on_a_russian_layout(self):
+        typeable = re.compile(r"[а-яёА-ЯЁ0-9 .,:;!?%*()_\"-]+")
+        for texts in TEXTS_RU.values():
+            for text in texts:
+                self.assertTrue(typeable.fullmatch(text), text)
 
 
 if __name__ == "__main__":
