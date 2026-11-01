@@ -107,6 +107,15 @@
     overflow: hidden;
   }
   .char { color: var(--muted); }
+
+  .keyboard { display: block; width: 100%; height: auto; margin-top: 20px; }
+  .key rect { fill: var(--panel); stroke: var(--line); }
+  .key text { fill: var(--muted); font-size: 15px; font-weight: 600; text-anchor: middle; }
+  .key.next rect { fill: var(--accent); stroke: var(--accent); }
+  .key.next text { fill: var(--bg); }
+  .palm { fill: var(--muted); fill-opacity: 0.3; }
+  .finger { stroke: var(--muted); stroke-opacity: 0.3; stroke-width: 22; stroke-linecap: round; }
+  .finger.active { stroke: var(--accent); stroke-opacity: 0.75; }
   .char.good { color: var(--good); }
   .char.bad { color: var(--bad-ink); background: var(--bad-bg); }
   .char.current { color: var(--ink); box-shadow: inset 0 -3px 0 var(--accent); }
@@ -176,6 +185,7 @@
       <p><span class="stat-label" data-ru="Точность">Accuracy</span><span class="stat-value" id="stat-accuracy"></span></p>
     </div>
     <div class="text" id="text"></div>
+    <svg class="keyboard" id="keyboard" viewBox="0 0 640 330" aria-hidden="true"></svg>
     <p class="hint" data-ru="Backspace: исправить ошибку, Esc: в меню. Включите русскую раскладку клавиатуры.">Backspace: fix a mistake &nbsp; Esc: back to menu</p>
   </section>
 
@@ -360,6 +370,7 @@
       spans[i].className = `char ${state}`;
     }
     if (round.minute) scrollToCurrentChar();
+    drawKeyboardHint(round.target[round.typed.length]);
     drawStats();
   }
 
@@ -369,6 +380,121 @@
     const lineHeight = parseFloat(getComputedStyle(box).lineHeight);
     const line = Math.floor(box.children[round.typed.length].offsetTop / lineHeight);
     box.scrollTop = Math.max(0, line - 1) * lineHeight;
+  }
+
+  // ----- Keyboard hint: shows the next key and the finger that presses it -----
+
+  // Each row of keys: the plain characters, then the same keys with Shift.
+  const KEY_ROWS = {
+    en: [
+      ["`1234567890-=", "~!@#$%^&*()_+"],
+      ["qwertyuiop[]\\", "QWERTYUIOP{}|"],
+      ["asdfghjkl;'", "ASDFGHJKL:\""],
+      ["zxcvbnm,./", "ZXCVBNM<>?"],
+    ],
+    ru: [
+      ["ё1234567890-=", "Ё!\"№;%:?*()_+"],
+      ["йцукенгшщзхъ\\", "ЙЦУКЕНГШЩЗХЪ/"],
+      ["фывапролджэ", "ФЫВАПРОЛДЖЭ"],
+      ["ячсмитьбю.", "ЯЧСМИТЬБЮ,"],
+    ],
+  };
+  const SVG_NS = "http://www.w3.org/2000/svg";
+  const KEY_STEP = 44;
+  const KEY_SIZE = 40;
+  const ROW_STARTS = [0, 66, 78, 100];
+
+  // Fingers: 0-3 left pinky to index, 4-7 right index to pinky, 8-9 thumbs.
+  const LEFT_THUMB = 8;
+  const RIGHT_THUMB = 9;
+  const RIGHT_PINKY = 7;
+  const LEFT_PINKY = 0;
+  const KEY_FINGERS = ["0012334456777", "0123344567777", "01233445677", "0123344567"];
+  const HOME_COLUMNS = [0, 1, 2, 3, 6, 7, 8, 9];
+  const FINGER_ROOTS = [
+    [122, 268], [148, 254], [174, 250], [200, 256], [392, 256], [418, 250], [444, 254], [470, 268],
+    [232, 282], [360, 282],
+  ];
+
+  const keyboard = { chars: new Map(), keys: [], fingers: [], homes: [] };
+
+  function addSvg(parent, name, attributes) {
+    const item = document.createElementNS(SVG_NS, name);
+    for (const [key, value] of Object.entries(attributes)) item.setAttribute(key, value);
+    parent.append(item);
+    return item;
+  }
+
+  // Draws one key. A finger rests just below the key's centre, keeping its label readable.
+  function addKey(x, y, width, label) {
+    const group = addSvg(element("keyboard"), "g", { class: "key" });
+    addSvg(group, "rect", { x, y, width, height: KEY_SIZE, rx: 5 });
+    addSvg(group, "text", { x: x + width / 2, y: y + 26 }).textContent = label;
+    const key = { group, tip: [x + width / 2, y + KEY_SIZE + 2] };
+    keyboard.keys.push(key);
+    return key;
+  }
+
+  function buildKeyboard() {
+    KEY_ROWS[language].forEach(([plain, shifted], row) => {
+      [...plain].forEach((char, column) => {
+        const x = ROW_STARTS[row] + column * KEY_STEP;
+        const key = addKey(x, row * KEY_STEP, KEY_SIZE, char.toUpperCase());
+        key.finger = Number(KEY_FINGERS[row][column]);
+        keyboard.chars.set(char, { key, shift: false });
+        keyboard.chars.set([...shifted][column], { key, shift: true });
+        if (row === 2 && HOME_COLUMNS.includes(column)) {
+          keyboard.homes[key.finger] = key.tip;
+        }
+      });
+    });
+
+    addKey(572, 0, 68, "");
+    addKey(0, KEY_STEP, 62, "");
+    addKey(0, 2 * KEY_STEP, 74, "");
+    addKey(562, 2 * KEY_STEP, 78, "");
+    keyboard.leftShift = addKey(0, 3 * KEY_STEP, 96, "Shift");
+    keyboard.rightShift = addKey(540, 3 * KEY_STEP, 100, "Shift");
+    keyboard.space = addKey(170, 4 * KEY_STEP, 252, say("Space", "Пробел"));
+    keyboard.space.finger = RIGHT_THUMB;
+    keyboard.homes[LEFT_THUMB] = [240, 4 * KEY_STEP + 30];
+    keyboard.homes[RIGHT_THUMB] = [352, 4 * KEY_STEP + 30];
+
+    const svg = element("keyboard");
+    addSvg(svg, "rect", { class: "palm", x: 106, y: 262, width: 136, height: 90, rx: 34 });
+    addSvg(svg, "rect", { class: "palm", x: 350, y: 262, width: 136, height: 90, rx: 34 });
+    keyboard.fingers = FINGER_ROOTS.map(([x, y]) =>
+      addSvg(svg, "line", { class: "finger", x1: x, y1: y }));
+  }
+
+  function moveFinger(finger, tip, active) {
+    const line = keyboard.fingers[finger];
+    line.setAttribute("x2", tip[0]);
+    line.setAttribute("y2", tip[1]);
+    line.classList.toggle("active", active);
+  }
+
+  function pressKey(key, finger) {
+    key.group.classList.add("next");
+    moveFinger(finger, key.tip, true);
+  }
+
+  function drawKeyboardHint(char) {
+    for (const key of keyboard.keys) key.group.classList.remove("next");
+    keyboard.homes.forEach((tip, finger) => moveFinger(finger, tip, false));
+
+    if (char === " ") {
+      pressKey(keyboard.space, keyboard.space.finger);
+      return;
+    }
+    const found = keyboard.chars.get(char);
+    if (!found) return;
+    pressKey(found.key, found.key.finger);
+    if (found.shift) {
+      // Shift is pressed by the hand that is not typing the letter.
+      if (found.key.finger <= 3) pressKey(keyboard.rightShift, RIGHT_PINKY);
+      else pressKey(keyboard.leftShift, LEFT_PINKY);
+    }
   }
 
   // ----- Results and scores -----
@@ -505,6 +631,7 @@
     button.addEventListener("click", () => setMode(button.dataset.mode));
   }
   setMode(mode);
+  buildKeyboard();
   element("show-tips").addEventListener("click", showTips);
   loadScores();
 </script>

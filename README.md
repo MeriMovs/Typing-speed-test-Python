@@ -49,6 +49,12 @@ type for 60 seconds from your first key press, and the clock counts down. Scores
 go in the same list as full text rounds. The terminal version does not have
 this mode.
 
+## Keyboard hint
+
+While you type in the browser version, a keyboard with two hands shows the next
+key and the finger that should press it. For capital letters and symbols it
+also shows which Shift key to use. In Russian it shows the Russian layout.
+
 ## How the score is calculated
 
 - **WPM (words per minute)** = (correct characters / 5) / minutes. A "word" is
