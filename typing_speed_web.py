@@ -25,6 +25,7 @@ from typing_speed_test import (
 )
 
 PAGE_FILE = Path(__file__).with_name("typing_speed_web.html")
+TIPS_FILE = Path(__file__).with_name("typing_tips.html")
 HOST = "127.0.0.1"  # Only this computer can reach the server.
 PORT = 8000
 MAX_BODY_SIZE = 1024
@@ -51,6 +52,8 @@ class GameHandler(BaseHTTPRequestHandler):
         url = urlparse(self.path)
         if url.path == "/":
             self.send_body(PAGE_FILE.read_bytes(), "text/html; charset=utf-8")
+        elif url.path == "/tips":
+            self.send_body(TIPS_FILE.read_bytes(), "text/html; charset=utf-8")
         elif url.path == "/api/text":
             level = parse_qs(url.query).get("level", [""])[0]
             if level in TEXTS:

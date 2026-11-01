@@ -61,6 +61,11 @@ class ServerTests(unittest.TestCase):
         self.assertEqual(status, 200)
         self.assertIn(b"Typing Speed Test", body)
 
+    def test_tips_page_is_served(self):
+        status, body = self.request("GET", "/tips")
+        self.assertEqual(status, 200)
+        self.assertIn(b"How to type faster", body)
+
     def test_text_comes_from_the_chosen_level(self):
         status, body = self.request("GET", "/api/text?level=Hard")
         self.assertEqual(status, 200)

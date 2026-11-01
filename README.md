@@ -53,6 +53,7 @@ python3 -m unittest
 - `typing_speed_test.py` - the game logic and the terminal version
 - `typing_speed_web.py` - the server for the browser version
 - `typing_speed_web.html` - the browser version's page
+- `typing_tips.html` - the browser version's "How to type faster" page
 - `test_typing_speed_test.py` - tests for the game logic
 - `test_typing_speed_web.py` - tests for the server
 - `scores.json` - saved scores, created after your first round

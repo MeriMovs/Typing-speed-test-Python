@@ -74,7 +74,8 @@
   }
   .levels { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
   .levels button { padding: 20px 16px; font-size: 18px; font-weight: 600; }
-  .scores-link { margin-top: 12px; width: 100%; text-align: left; }
+  .tips-link { margin-top: 12px; width: 100%; text-align: left; }
+  .best-scores { margin-top: 40px; }
   @media (max-width: 480px) { .levels { grid-template-columns: 1fr; } }
 
   .stats { display: flex; flex-wrap: wrap; gap: 8px 32px; margin-bottom: 20px; }
@@ -130,8 +131,21 @@
       <button type="button" data-level="Medium"><kbd>2</kbd>Medium</button>
       <button type="button" data-level="Hard"><kbd>3</kbd>Hard</button>
     </div>
-    <button type="button" class="scores-link" id="show-scores"><kbd>S</kbd>Best scores</button>
+    <button type="button" class="tips-link" id="show-tips"><kbd>H</kbd>How to type faster</button>
     <p class="message" id="menu-message" role="alert" hidden></p>
+    <div class="best-scores">
+      <h2>Best scores</h2>
+      <p class="muted" id="no-scores" hidden>No scores yet. Play a round first!</p>
+      <table id="score-table" hidden>
+        <thead>
+          <tr>
+            <th>#</th><th class="number">WPM</th><th class="number">Accuracy</th>
+            <th>Level</th><th>Date</th>
+          </tr>
+        </thead>
+        <tbody id="score-rows"></tbody>
+      </table>
+    </div>
   </section>
 
   <section id="game" hidden>
@@ -156,27 +170,12 @@
     <p class="message" id="result-message" role="status" hidden></p>
     <button type="button" class="back" data-back><kbd>Enter</kbd>Back to menu</button>
   </section>
-
-  <section id="scores" hidden>
-    <h2>Best scores</h2>
-    <p class="muted" id="no-scores" hidden>No scores yet. Play a round first!</p>
-    <table id="score-table" hidden>
-      <thead>
-        <tr>
-          <th>#</th><th class="number">WPM</th><th class="number">Accuracy</th>
-          <th>Level</th><th>Date</th>
-        </tr>
-      </thead>
-      <tbody id="score-rows"></tbody>
-    </table>
-    <button type="button" class="back" data-back><kbd>Enter</kbd>Back to menu</button>
-  </section>
 </main>
 
 <script>
   const CHARS_PER_WORD = 5;  // The same "standard word" as the terminal game.
 
-  const screens = ["menu", "game", "results", "scores"];
+  const screens = ["menu", "game", "results"];
   const element = (id) => document.getElementById(id);
 
   let screen = "menu";
@@ -332,12 +331,13 @@
       if (result.new_record) {
         showMessage("result-message", `New best score for ${finished.level}!`);
       }
+      loadScores();
     } catch {
       showMessage("result-message", "Your score could not be saved.");
     }
   }
 
-  async function showScores() {
+  async function loadScores() {
     let scores;
     try {
       scores = await fetchJson("/api/scores");
@@ -346,7 +346,6 @@
       return;
     }
 
-    showMessage("menu-message", "");
     element("score-rows").replaceChildren(...scores.map((score, index) => {
       const row = document.createElement("tr");
       const cells = [
@@ -366,10 +365,13 @@
     }));
     element("score-table").hidden = scores.length === 0;
     element("no-scores").hidden = scores.length > 0;
-    showScreen("scores");
   }
 
   // ----- Keyboard and buttons -----
+
+  function showTips() {
+    location.href = "/tips";
+  }
 
   function handleGameKey(event) {
     if (event.key === "Escape") {
@@ -388,7 +390,7 @@
   function handleMenuKey(event) {
     const level = { 1: "Easy", 2: "Medium", 3: "Hard" }[event.key];
     if (level) startRound(level);
-    else if (event.key.toLowerCase() === "s") showScores();
+    else if (event.key.toLowerCase() === "h") showTips();
   }
 
   document.addEventListener("keydown", (event) => {
@@ -410,7 +412,8 @@
   for (const button of document.querySelectorAll("[data-back]")) {
     button.addEventListener("click", goToMenu);
   }
-  element("show-scores").addEventListener("click", showScores);
+  element("show-tips").addEventListener("click", showTips);
+  loadScores();
 </script>
 </body>
 </html>

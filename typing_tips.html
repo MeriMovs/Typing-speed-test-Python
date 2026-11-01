@@ -1,0 +1,243 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How to type faster</title>
+<link rel="icon" href="data:,">
+<style>
+  :root {
+    color-scheme: light dark;
+    --bg: #f6f5f1;
+    --panel: #ffffff;
+    --ink: #22242a;
+    --muted: #62656e;
+    --line: #dcdbd4;
+    --accent: #0b6e75;
+    --good: #1a7a43;
+    --bad: #c62f3a;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #17191d;
+      --panel: #21242a;
+      --ink: #eceded;
+      --muted: #a2a6af;
+      --line: #383c44;
+      --accent: #5cc8cf;
+      --good: #63d08e;
+      --bad: #f0717b;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    padding: 48px 16px;
+    background: var(--bg);
+    color: var(--ink);
+    font: 16px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  }
+  main { max-width: 720px; margin: 0 auto; }
+  h1 { margin: 0 0 4px; font-size: 28px; letter-spacing: -0.01em; }
+  h2 { margin: 0 0 8px; font-size: 20px; }
+  p { margin: 0; }
+  .muted { color: var(--muted); }
+  .intro { margin-bottom: 32px; }
+  .tip {
+    margin-bottom: 20px;
+    padding: 24px;
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+  }
+  svg { display: block; width: 100%; height: auto; margin-top: 16px; }
+  .figure-text { font-size: 13px; fill: currentColor; }
+  .keys text { font: 600 15px system-ui, sans-serif; fill: #22242a; text-anchor: middle; }
+  .legend { display: flex; flex-wrap: wrap; gap: 4px 20px; margin: 12px 0 0; padding: 0; list-style: none; font-size: 14px; }
+  .swatch { display: inline-block; width: 14px; height: 14px; margin-right: 6px; border-radius: 3px; vertical-align: -2px; }
+  .more { margin: 8px 0 0; padding-left: 20px; }
+  .more li { margin-bottom: 8px; }
+  button {
+    margin-top: 8px;
+    padding: 10px 16px;
+    font: inherit;
+    color: inherit;
+    cursor: pointer;
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+  }
+  button:hover { border-color: var(--accent); }
+  button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  kbd {
+    display: inline-block;
+    min-width: 1.6em;
+    margin-right: 10px;
+    padding: 0 5px;
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    color: var(--muted);
+    font: 13px/1.6 ui-monospace, Menlo, Consolas, monospace;
+    text-align: center;
+  }
+</style>
+</head>
+<body>
+<main>
+  <h1>How to type faster</h1>
+  <p class="muted intro">Good habits matter more than moving your fingers quickly.</p>
+
+  <section class="tip">
+    <h2>Give every finger its own keys</h2>
+    <p>Rest your fingers on the home row, the keys with the thick borders, and return there after each key. Use all ten fingers.</p>
+    <svg class="keys" viewBox="0 0 600 216" role="img"
+         aria-label="Keyboard with each key coloured by the finger that presses it.">
+        <rect x="0" y="0" width="40" height="40" rx="5" fill="#f4b6c2" stroke="#22242a" stroke-width="1"/><text x="20" y="26">`</text>
+        <rect x="44" y="0" width="40" height="40" rx="5" fill="#f4b6c2" stroke="#22242a" stroke-width="1"/><text x="64" y="26">1</text>
+        <rect x="88" y="0" width="40" height="40" rx="5" fill="#f9d48b" stroke="#22242a" stroke-width="1"/><text x="108" y="26">2</text>
+        <rect x="132" y="0" width="40" height="40" rx="5" fill="#a9dfb4" stroke="#22242a" stroke-width="1"/><text x="152" y="26">3</text>
+        <rect x="176" y="0" width="40" height="40" rx="5" fill="#a5cdf2" stroke="#22242a" stroke-width="1"/><text x="196" y="26">4</text>
+        <rect x="220" y="0" width="40" height="40" rx="5" fill="#a5cdf2" stroke="#22242a" stroke-width="1"/><text x="240" y="26">5</text>
+        <rect x="264" y="0" width="40" height="40" rx="5" fill="#a5cdf2" stroke="#22242a" stroke-width="1"/><text x="284" y="26">6</text>
+        <rect x="308" y="0" width="40" height="40" rx="5" fill="#a5cdf2" stroke="#22242a" stroke-width="1"/><text x="328" y="26">7</text>
+        <rect x="352" y="0" width="40" height="40" rx="5" fill="#a9dfb4" stroke="#22242a" stroke-width="1"/><text x="372" y="26">8</text>
+        <rect x="396" y="0" width="40" height="40" rx="5" fill="#f9d48b" stroke="#22242a" stroke-width="1"/><text x="416" y="26">9</text>
+        <rect x="440" y="0" width="40" height="40" rx="5" fill="#f4b6c2" stroke="#22242a" stroke-width="1"/><text x="460" y="26">0</text>
+        <rect x="484" y="0" width="40" height="40" rx="5" fill="#f4b6c2" stroke="#22242a" stroke-width="1"/><text x="504" y="26">-</text>
+        <rect x="528" y="0" width="40" height="40" rx="5" fill="#f4b6c2" stroke="#22242a" stroke-width="1"/><text x="548" y="26">=</text>
+        <rect x="22" y="44" width="40" height="40" rx="5" fill="#f4b6c2" stroke="#22242a" stroke-width="1"/><text x="42" y="70">Q</text>
+        <rect x="66" y="44" width="40" height="40" rx="5" fill="#f9d48b" stroke="#22242a" stroke-width="1"/><text x="86" y="70">W</text>
+        <rect x="110" y="44" width="40" height="40" rx="5" fill="#a9dfb4" stroke="#22242a" stroke-width="1"/><text x="130" y="70">E</text>
+        <rect x="154" y="44" width="40" height="40" rx="5" fill="#a5cdf2" stroke="#22242a" stroke-width="1"/><text x="174" y="70">R</text>
+        <rect x="198" y="44" width="40" height="40" rx="5" fill="#a5cdf2" stroke="#22242a" stroke-width="1"/><text x="218" y="70">T</text>
+        <rect x="242" y="44" width="40" height="40" rx="5" fill="#a5cdf2" stroke="#22242a" stroke-width="1"/><text x="262" y="70">Y</text>
+        <rect x="286" y="44" width="40" height="40" rx="5" fill="#a5cdf2" stroke="#22242a" stroke-width="1"/><text x="306" y="70">U</text>
+        <rect x="330" y="44" width="40" height="40" rx="5" fill="#a9dfb4" stroke="#22242a" stroke-width="1"/><text x="350" y="70">I</text>
+        <rect x="374" y="44" width="40" height="40" rx="5" fill="#f9d48b" stroke="#22242a" stroke-width="1"/><text x="394" y="70">O</text>
+        <rect x="418" y="44" width="40" height="40" rx="5" fill="#f4b6c2" stroke="#22242a" stroke-width="1"/><text x="438" y="70">P</text>
+        <rect x="462" y="44" width="40" height="40" rx="5" fill="#f4b6c2" stroke="#22242a" stroke-width="1"/><text x="482" y="70">[</text>
+        <rect x="506" y="44" width="40" height="40" rx="5" fill="#f4b6c2" stroke="#22242a" stroke-width="1"/><text x="526" y="70">]</text>
+        <rect x="550" y="44" width="40" height="40" rx="5" fill="#f4b6c2" stroke="#22242a" stroke-width="1"/><text x="570" y="70">\</text>
+        <rect x="33" y="88" width="40" height="40" rx="5" fill="#f4b6c2" stroke="#22242a" stroke-width="2"/><text x="53" y="114">A</text>
+        <rect x="77" y="88" width="40" height="40" rx="5" fill="#f9d48b" stroke="#22242a" stroke-width="2"/><text x="97" y="114">S</text>
+        <rect x="121" y="88" width="40" height="40" rx="5" fill="#a9dfb4" stroke="#22242a" stroke-width="2"/><text x="141" y="114">D</text>
+        <rect x="165" y="88" width="40" height="40" rx="5" fill="#a5cdf2" stroke="#22242a" stroke-width="2"/><text x="185" y="114">F</text>
+        <rect x="209" y="88" width="40" height="40" rx="5" fill="#a5cdf2" stroke="#22242a" stroke-width="1"/><text x="229" y="114">G</text>
+        <rect x="253" y="88" width="40" height="40" rx="5" fill="#a5cdf2" stroke="#22242a" stroke-width="1"/><text x="273" y="114">H</text>
+        <rect x="297" y="88" width="40" height="40" rx="5" fill="#a5cdf2" stroke="#22242a" stroke-width="2"/><text x="317" y="114">J</text>
+        <rect x="341" y="88" width="40" height="40" rx="5" fill="#a9dfb4" stroke="#22242a" stroke-width="2"/><text x="361" y="114">K</text>
+        <rect x="385" y="88" width="40" height="40" rx="5" fill="#f9d48b" stroke="#22242a" stroke-width="2"/><text x="405" y="114">L</text>
+        <rect x="429" y="88" width="40" height="40" rx="5" fill="#f4b6c2" stroke="#22242a" stroke-width="2"/><text x="449" y="114">;</text>
+        <rect x="473" y="88" width="40" height="40" rx="5" fill="#f4b6c2" stroke="#22242a" stroke-width="1"/><text x="493" y="114">'</text>
+        <rect x="55" y="132" width="40" height="40" rx="5" fill="#f4b6c2" stroke="#22242a" stroke-width="1"/><text x="75" y="158">Z</text>
+        <rect x="99" y="132" width="40" height="40" rx="5" fill="#f9d48b" stroke="#22242a" stroke-width="1"/><text x="119" y="158">X</text>
+        <rect x="143" y="132" width="40" height="40" rx="5" fill="#a9dfb4" stroke="#22242a" stroke-width="1"/><text x="163" y="158">C</text>
+        <rect x="187" y="132" width="40" height="40" rx="5" fill="#a5cdf2" stroke="#22242a" stroke-width="1"/><text x="207" y="158">V</text>
+        <rect x="231" y="132" width="40" height="40" rx="5" fill="#a5cdf2" stroke="#22242a" stroke-width="1"/><text x="251" y="158">B</text>
+        <rect x="275" y="132" width="40" height="40" rx="5" fill="#a5cdf2" stroke="#22242a" stroke-width="1"/><text x="295" y="158">N</text>
+        <rect x="319" y="132" width="40" height="40" rx="5" fill="#a5cdf2" stroke="#22242a" stroke-width="1"/><text x="339" y="158">M</text>
+        <rect x="363" y="132" width="40" height="40" rx="5" fill="#a9dfb4" stroke="#22242a" stroke-width="1"/><text x="383" y="158">,</text>
+        <rect x="407" y="132" width="40" height="40" rx="5" fill="#f9d48b" stroke="#22242a" stroke-width="1"/><text x="427" y="158">.</text>
+        <rect x="451" y="132" width="40" height="40" rx="5" fill="#f4b6c2" stroke="#22242a" stroke-width="1"/><text x="471" y="158">/</text>
+        <rect x="165" y="176" width="264" height="40" rx="5" fill="#d3c0f0" stroke="#22242a"/><text x="297" y="202">Space</text>
+    </svg>
+    <ul class="legend">
+        <li><span class="swatch" style="background:#f4b6c2"></span>Pinky</li>
+        <li><span class="swatch" style="background:#f9d48b"></span>Ring</li>
+        <li><span class="swatch" style="background:#a9dfb4"></span>Middle</li>
+        <li><span class="swatch" style="background:#a5cdf2"></span>Index</li>
+        <li><span class="swatch" style="background:#d3c0f0"></span>Thumb</li>
+    </ul>
+  </section>
+
+  <section class="tip">
+    <h2>Keep your eyes on the text</h2>
+    <p>Looking down at the keyboard breaks your flow. Let your fingers find the keys by themselves.</p>
+    <svg viewBox="0 0 560 170" role="img"
+         aria-label="Two pictures. Looking at the screen is right. Looking down at the keyboard is wrong.">
+      <g fill="none" stroke="currentColor" stroke-width="2">
+        <rect x="120" y="14" width="120" height="70" rx="4"/>
+        <rect x="120" y="116" width="120" height="30" rx="4"/>
+        <rect x="400" y="14" width="120" height="70" rx="4"/>
+        <rect x="400" y="116" width="120" height="30" rx="4"/>
+        <ellipse cx="44" cy="80" rx="26" ry="15"/>
+        <ellipse cx="324" cy="80" rx="26" ry="15"/>
+      </g>
+      <circle cx="50" cy="76" r="7" fill="currentColor"/>
+      <circle cx="330" cy="86" r="7" fill="currentColor"/>
+      <path d="M76 72 L114 54" stroke="var(--good)" stroke-width="3" stroke-dasharray="6 4" fill="none"/>
+      <path d="M356 90 L394 124" stroke="var(--bad)" stroke-width="3" stroke-dasharray="6 4" fill="none"/>
+      <text class="figure-text" x="180" y="54" text-anchor="middle">the text</text>
+      <text class="figure-text" x="180" y="136" text-anchor="middle">keyboard</text>
+      <text class="figure-text" x="460" y="54" text-anchor="middle">the text</text>
+      <text class="figure-text" x="460" y="136" text-anchor="middle">keyboard</text>
+      <text class="figure-text" x="44" y="140" text-anchor="middle" style="fill:var(--good);font-weight:600">Do this</text>
+      <text class="figure-text" x="324" y="140" text-anchor="middle" style="fill:var(--bad);font-weight:600">Not this</text>
+    </svg>
+  </section>
+
+  <section class="tip">
+    <h2>Keep a steady rhythm</h2>
+    <p>Each mark below is a key press. Even spacing beats rushing the easy words and then stalling on the hard ones.</p>
+    <svg viewBox="0 0 560 110" role="img"
+         aria-label="Evenly spaced key presses compared with bursts and long pauses.">
+      <text class="figure-text" x="0" y="34">Steady</text>
+      <path stroke="var(--good)" stroke-width="4" d="M90 18v24M125 18v24M160 18v24M195 18v24M230 18v24M265 18v24M300 18v24M335 18v24M370 18v24M405 18v24M440 18v24M475 18v24M510 18v24"/>
+      <text class="figure-text" x="0" y="89">Rushed</text>
+      <path stroke="var(--bad)" stroke-width="4" d="M90 73v24M100 73v24M110 73v24M120 73v24M210 73v24M222 73v24M232 73v24M330 73v24M342 73v24M352 73v24M362 73v24M372 73v24M510 73v24"/>
+    </svg>
+  </section>
+
+  <section class="tip">
+    <h2>Sit comfortably</h2>
+    <p>Sit up straight and keep your wrists and shoulders relaxed.</p>
+    <svg viewBox="0 0 560 262" role="img"
+         aria-label="Side view of a person sitting straight at a desk, feet flat, looking at a screen.">
+      <g fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="150" cy="48" r="20"/>
+        <path d="M150 70 V152 H215 V242 H240"/>
+        <path d="M150 88 L170 132 H236"/>
+      </g>
+      <g fill="none" stroke="var(--muted)" stroke-width="4" stroke-linecap="round">
+        <path d="M122 92 V160 H210"/>
+        <path d="M165 160 V242"/>
+        <path d="M232 140 H400"/>
+        <path d="M380 140 V246"/>
+        <path d="M340 140 V122"/>
+        <path d="M60 246 H460"/>
+      </g>
+      <rect x="334" y="44" width="10" height="78" rx="2" fill="currentColor"/>
+      <rect x="240" y="134" width="44" height="6" rx="2" fill="currentColor"/>
+      <path d="M172 50 H328" stroke="var(--accent)" stroke-width="2" stroke-dasharray="6 4"/>
+      <text class="figure-text" x="176" y="42">Eyes on the screen</text>
+      <text class="figure-text" x="396" y="176">Relaxed wrists</text>
+      <path d="M392 170 L268 144" stroke="var(--accent)" stroke-width="1.5"/>
+      <text class="figure-text" x="0" y="120">Back straight</text>
+      <text class="figure-text" x="250" y="236">Feet flat</text>
+    </svg>
+  </section>
+
+  <section class="tip">
+    <h2>And three more</h2>
+    <ul class="more">
+      <li>Aim for accuracy first. Fixing mistakes costs more time than typing a little slower.</li>
+      <li>Read a word or two ahead, so you always know what comes next.</li>
+      <li>Practise for a few minutes every day. Short, regular sessions work best.</li>
+    </ul>
+  </section>
+
+  <button type="button" id="back"><kbd>Enter</kbd>Back to menu</button>
+</main>
+
+<script>
+  function goBack() {
+    location.href = "/";
+  }
+
+  document.getElementById("back").addEventListener("click", goBack);
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Enter" && !event.repeat) goBack();
+  });
+</script>
+</body>
+</html>
